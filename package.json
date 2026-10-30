@@ -1,0 +1,14 @@
+{
+  "name": "web-rtc-media-lifecycle-kit",
+  "version": "0.1.0",
+  "description": "Reusable defensive patterns for reliable browser-based real-time audio and video sessions.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Nico Cartin Reyes",
+  "scripts": {
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

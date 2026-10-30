@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/web-rtc-media-lifecycle-kit/media-event.schema.json",
+  "title": "Web RTC Media Event",
+  "type": "object",
+  "required": ["timestamp", "event"],
+  "properties": {
+    "timestamp": { "type": "string", "format": "date-time" },
+    "event": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "stage": { "type": "string", "maxLength": 100 },
+    "mediaType": { "enum": ["audio", "video", "unknown"] },
+    "device": { "type": "string", "maxLength": 100 },
+    "browser": { "type": "string", "maxLength": 100 },
+    "sdkVersion": { "type": "string", "maxLength": 100 }
+  },
+  "additionalProperties": false
+}
