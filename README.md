@@ -45,3 +45,7 @@ See [SECURITY.md](SECURITY.md) and [docs/privacy-model.md](docs/privacy-model.md
 ## License
 
 MIT. See [LICENSE](LICENSE).
+
+## Privacy-conscious session monitoring
+
+The package also includes generic helpers for correlating active scheduled sessions with normalized browser events. They classify only coarse device and browser families and do not read logs, call external APIs, or send notifications. See [docs/session-monitoring.md](docs/session-monitoring.md).

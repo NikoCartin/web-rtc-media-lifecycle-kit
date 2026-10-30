@@ -32,7 +32,7 @@ test('returns a bounded failure result', async () => {
 });
 
 test('normalizes video track settings', () => {
-  const result = inspectVideoTrack({ getSettings: () => ({ width: 1920, height: 1080, facingMode: 'user', deviceId: 'secret-device-id' }) });
+  const result = inspectVideoTrack({ getSettings: () => ({ width: 1920, height: 1080, facingMode: 'user', deviceId: 'synthetic-device-id' }) });
   assert.deepEqual(result, { ok: true, width: 1920, height: 1080, aspectRatio: 1.7778, facingMode: 'user', deviceIdPresent: true, displaySurface: null, orientationHint: 'landscape' });
 });
 
@@ -40,4 +40,22 @@ test('sanitizes error payloads to portable fields', () => {
   const result = sanitizeError(new Error('bad'), { stage: 'remote_media', email: 'do-not-copy@example.com' });
   assert.equal(result.context.stage, 'remote_media');
   assert.equal(result.context.email, undefined);
+});
+
+test('correlates only events belonging to active confirmed sessions', async () => {
+  const { classifyDevice, classifyBrowser, correlateActiveSessions } = await import('../src/sessionMonitor.js');
+  assert.equal(classifyDevice('Mozilla/5.0 (iPhone)'), 'iPhone');
+  assert.equal(classifyBrowser('Mozilla/5.0 Chrome/156.0 Safari/537.36'), 'Chrome');
+  const result = correlateActiveSessions({
+    now: 1000,
+    schedule: [
+      { sessionId: 'opaque-1', status: 'CONFIRMED', startMs: 0, endMs: 2000 },
+      { sessionId: 'opaque-2', status: 'CANCELLED', startMs: 0, endMs: 2000 }
+    ],
+    events: [
+      { sessionId: 'opaque-1', type: 'session_page', timestampMs: 900, userAgent: 'Mozilla/5.0 (Macintosh; Intel Mac OS X) Safari/605.1' },
+      { sessionId: 'opaque-2', type: 'session_page', timestampMs: 900, userAgent: 'Mozilla/5.0 (Windows NT 10.0) Chrome/156.0' }
+    ]
+  });
+  assert.deepEqual(result, [{ sessionId: 'opaque-1', type: 'session_page', device: 'Mac', browser: 'Safari', lastSeenMs: 900 }]);
 });
